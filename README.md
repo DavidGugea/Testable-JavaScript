@@ -529,3 +529,13 @@ A test spy wraps the “real” object, overriding some method and letting other
 # 5. Code Coverage
 
 \-
+
+# 6. Integration, Performance, and Load Testing
+
+## The Importance of Integration
+
+All test types rely on your entire application being up and running. Whether in a testing environment or in production, all the pieces of the application must fit together. Testable JavaScript mandates small pieces of code with minimal dependencies; the piper gets paid when all those pieces are combined. An event-based architecture is an example of lots of loosely coupled pieces that must work in concert when combined. Therefore, it is imperative that automation is present to deploy and bring up the system. Once the system is up, testing can proceed
+
+## Integration Testing
+
+Conducting an integration test on a web application requires running your application in a browser and ensuring that its functionality works as expected. Testing pieces in isolation through unit testing is a nice start, but you must follow this up with integration testing. Integration testing tests how your code fits together in the larger scheme of things. There is no mocking or stubbing out of dependencies at this level; you are testing at the application level
