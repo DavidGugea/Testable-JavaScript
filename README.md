@@ -539,3 +539,7 @@ All test types rely on your entire application being up and running. Whether in 
 ## Integration Testing
 
 Conducting an integration test on a web application requires running your application in a browser and ensuring that its functionality works as expected. Testing pieces in isolation through unit testing is a nice start, but you must follow this up with integration testing. Integration testing tests how your code fits together in the larger scheme of things. There is no mocking or stubbing out of dependencies at this level; you are testing at the application level
+
+# 7. Debugging
+
+\-
