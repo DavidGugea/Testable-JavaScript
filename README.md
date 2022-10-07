@@ -525,3 +525,7 @@ Stubs are used to return canned values back to the tested function. Stubs do not
 ### Spies
 
 A test spy wraps the “real” object, overriding some method and letting others pass through. A spy is typically attached to a real object and intercepts some method calls (sometimes even only intercepting method calls with specific parameters) to return a canned response or keep track of the number of times a method has been called. Nonintercepted methods are simply handed off to the real object for normal processing. Spies are great for objects that have some “heavy” operations that you want to mock out and lighter-weight operations that the actual object can easily handle itself.
+
+# 5. Code Coverage
+
+\-
