@@ -438,7 +438,9 @@ Unfortunately, there is no magic bullet when it comes to unit testing. Developer
 Take a look at the following function:
 
 ```JavaScript
-
+function sum(a, b) {
+    return a + b;
+}
 ```
 
 Unfortunately, we are rarely called upon to test functions, such as sum, that have no side effects and whose return values are solely a function of their parameters. But even a function as simple as sum has gotchas. What happens if you pass in two strings? What if the parameters are a string and an integer? How about null, undefined, or NaN values?
@@ -468,7 +470,10 @@ Unit tests are cheap; you should have a lot of them. Just as a “regular” met
 Now that we have a well-defined function, let’s test the “correct” case. In this instance, we will pass in various flavors of two numbers. Here are the Y.Assert statements:
 
 ```JavaScript
-
+Y.Assert.areSame(sum(2, 2), 4, "2 + 2 does not equal 4?");
+Y.Assert.areSame(sum(0, 2), 2, "0 + 2 does not equal 2?");
+Y.Assert.areSame(sum(-2, 2), 0, "-2 + 2 does not equal 0?");
+Y.Assert.areSame(sum(.1, .4), .5, ".1 + .4 does not equal .5?");
 ```
 
 The preceding code is not earth-shattering; it just tests the basic cases, which is how this function will be called 99% of the time (answering the question, “Does the function do at a very basic level what it claims it does?”). These tests should be the easiest part of your testing, passing in good data and receiving good data back. These should be your first set of tests as these cases are by far the most common. This is where unit tests catch the most bugs; functions that do not fulfill their contract (from the function definition) are obviously broken.
@@ -480,7 +485,9 @@ Positive tests should be the first unit tests you write, as they provide a basel
 Negative testing will help locate those hard-to-find bugs typically manifested by the code blowing up somewhere far away from where the bug actually is. Can the code handle values it is not expecting? These tests pass in parameters not expected or wanted by the function under test and ensure that the function under test handles them properly. Here is an example:
 
 ```JavaScript
-
+Y.Assert.areSame(sum(2),null));
+Y.Assert.areSame(sum('1', '2'), null));
+Y.Assert.areSame(sum('asd', 'weoi'), null));
 ```
 
 This test quickly reveals that our sum function is not behaving properly. The key is that we know what “properly” is for the sum function: it should be returning null for nonnumbers. Without the comment block describing this function’s behavior, we would have no idea whether this function was misbehaving.
