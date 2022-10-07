@@ -543,3 +543,7 @@ Conducting an integration test on a web application requires running your applic
 # 7. Debugging
 
 \-
+
+# 8. Automation
+
+\-
