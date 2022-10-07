@@ -424,3 +424,97 @@ There is one more bit that injectors handle along with object construction: scop
 # 3. Event-Based Architectures
 
 \-
+
+# 4. Unit Tests
+
+## Introduction
+
+The hardest unit test to write is the first one. That first test requires a nontrivial amount of boilerplate. It also requires that you answer some initial questions. For example, should you use an existing unit test framework, or roll your own? What about an automated build process? How about collecting, displaying, and tracking unit test code coverage? Developers are already barely motivated to write any unit tests, and having to deal with these legitimate questions only makes the process more painful.
+
+Unfortunately, there is no magic bullet when it comes to unit testing. Developers will need to put in the work to get the rewards. Fortunately, the rewards are substantial. Starting with keeping your paycheck and ending with maintainable working code, unit tests provide a lot of value. As a developer, this is typically the only formal testing that is required; luckily, unit testing does not have to be difficult.
+
+## Writing Good Tests
+
+Take a look at the following function:
+
+```JavaScript
+
+```
+
+Unfortunately, we are rarely called upon to test functions, such as sum, that have no side effects and whose return values are solely a function of their parameters. But even a function as simple as sum has gotchas. What happens if you pass in two strings? What if the parameters are a string and an integer? How about null, undefined, or NaN values?
+
+Even the simplest function requires several cases to really run it through its paces. Even worse, the single unit test metric, code coverage, happily reports 100% code coverage from our single unit test. It’s obvious that the single test is not an effective test for the function, but a manager looking at a code coverage report may erroneously conclude that since this function has 100% code coverage it is therefore fully tested and reliable. While unit tests provide value, and code coverage metrics can measure that value to some extent, they obviously do not and cannot tell the whole story.
+
+So, what makes a good unit test? Code coverage, like it or not, is part of the equation. The other part of the equation is the edge and nonedge cases of the parameters. Given that the function’s dependencies are mocked out (and are unit-tested themselves to be sane), the parameters and external object stubs are the only knobs you, as a unit tester, have to twist. As an example, let’s use our old friend the sum function. This function takes two parameters. Each parameter can be one of six types (number, string, object, undefined, null, or Boolean)—so the perfect set of unit tests will test all combinations of these. But what will it test for? What does it mean, for example, to add null and undefined?
+
+With these questions in mind, perhaps the two most important factors of a good unit test are isolation and scope. As we will see in the following subsections, isolation and scope are closely related.
+
+### Isolation
+
+A unit test should load only the bare minimum needed to actually run the test. Any extra code may influence the test or the code being tested, and can cause problems. Typically, unit tests exercise a single method. That method is probably part of a file containing a class or module. That physical unit of code will have to be loaded. Unfortunately, not only does the method under test probably depend on other functions and methods in that file, but it likely has external dependencies (i.e., dependencies in another file) as well.
+
+To avoid loading external dependencies, we can use mocking, stubbing, and test doubles. I will provide details about these strategies later, but for now it’s important to note that they are all used in an attempt to keep the code under test isolated from other pieces of code as much as possible.
+
+Unit testing tests the smallest amount of code possible—a method, and nothing else. For that to be feasible, your test code must strive to isolate that method as much as possible.
+
+### Scope
+
+The scope of a unit test—what your test is actually testing—must be small. A fully isolated method allows the scope of the test to be as small as possible. Good unit tests test only one method; they should not rely on other methods being called or used. At the bottom level of a single unit test, a single assertion should rely on only the method being tested and any mocks, stubs, or doubles needed for the method to work.
+
+Unit tests are cheap; you should have a lot of them. Just as a “regular” method should not try to do more than one thing, neither should a unit test. Try to test and load the minimal amount of code necessary to successfully execute a unit test for your application. Unit tests typically focus at the level of a single function or method; however, it is up to you to determine the “unit” size that makes the most sense for your testing.
+
+## Positive Testing
+
+Now that we have a well-defined function, let’s test the “correct” case. In this instance, we will pass in various flavors of two numbers. Here are the Y.Assert statements:
+
+```JavaScript
+
+```
+
+The preceding code is not earth-shattering; it just tests the basic cases, which is how this function will be called 99% of the time (answering the question, “Does the function do at a very basic level what it claims it does?”). These tests should be the easiest part of your testing, passing in good data and receiving good data back. These should be your first set of tests as these cases are by far the most common. This is where unit tests catch the most bugs; functions that do not fulfill their contract (from the function definition) are obviously broken.
+
+Positive tests should be the first unit tests you write, as they provide a baseline of expected functionality upon which negative and bounds testing can be built. Here, you want to test all the common cases and permutations of how the function is actually supposed to be called and used.
+
+## Negative Testing
+
+Negative testing will help locate those hard-to-find bugs typically manifested by the code blowing up somewhere far away from where the bug actually is. Can the code handle values it is not expecting? These tests pass in parameters not expected or wanted by the function under test and ensure that the function under test handles them properly. Here is an example:
+
+```JavaScript
+
+```
+
+This test quickly reveals that our sum function is not behaving properly. The key is that we know what “properly” is for the sum function: it should be returning null for nonnumbers. Without the comment block describing this function’s behavior, we would have no idea whether this function was misbehaving.
+
+Negative testing will typically not find the same number of bugs as positive testing, but the bugs negative testing does find are usually nastier. These are the hard-to-find bugs when something is not working at a much higher level. They test corner cases, or cases when unexpected things happen. In such situations, what does the function do? Besides meeting its contract, will it behave sanely with unexpected input or state?
+
+## Code Coverage
+
+Code coverage is a measure, typically a percentage, of the lines of code executed versus not executed. It is generally used to view how much code is touched by any given test. More tests can be written to “cover” more uncovered lines of code, typically to a certain percentage. We will discuss code coverage in more depth in Chapter 5, but for now, suffice it to say that code coverage is another key to effective unit tests. While code coverage can be misleading when the percentages are high, it is much more applicable (and scary) when the covered percentage is low. A unit test with less than 50% code coverage is a red flag; 60% to 80% code coverage is the sweet spot, and anything over 80% is gravy. The law of diminishing returns can apply to unit testing when trying to get unit tests above 80% coverage. Remember, unit testing is not the only arrow in your QA quiver, but it is one of the few QA metrics that developers are responsible for. In Chapter 5, we will look at how to measure and visualize code coverage.
+
+It is important that code coverage information be generated automatically, without any human intervention. Once people get involved, things deteriorate rapidly. The process for generating code coverage must be seamless.
+
+## Real-World Testing
+
+Unfortunately, while it’s an ideal to aim for not all functions are as cut and dried as the sum function. Yet note that even a one-line, zero-dependency function is not as easy to unit-test properly as you might think. This again demonstrates the difficulty of unit testing in general and JavaScript unit testing in particular: if a one-line function has this many gotchas, what about real-world functions?
+
+## Dependencies
+
+We touched on the problem with dependencies earlier in the book. Almost every function has external dependencies that unit testing does not want to test. Unit testers can extract dependencies by utilizing mocks and stubs. Note that I said, “Unit testers can extract” here, because the author of the code under test also has several tools to extract dependencies from code, as detailed in Chapter 2. Once all of those avenues have been exhausted, the burden falls on the unit tests to isolate the code in question for testing.
+
+Use of command query separation highlights the differences between mocks and stubs: mocks are used for commands and stubs are used for queries.
+
+## Doubles
+
+Test doubles is a generic term for objects used by tests to stub or mock out dependencies (similar to stunt doubles in movies). Doubles can act as stubs and mocks at the same time, ensuring that external methods and APIs are called, determining how many times they have been called, capturing called parameters, and returning canned responses. A test double that records and captures information about how methods were called is called a spy.
+
+### Mock Objects
+
+Mock objects are used to verify that your function is correctly calling an external API. Tests involving mock objects verify that the function under test is passing the correct parameters (either by type or by value) to the external object. In the command query world, mocks test commands. In an event hub world, mocks test events being fired.
+
+### Stubs
+
+Stubs are used to return canned values back to the tested function. Stubs do not care how the external object’s method was called; stubs simply return a canned object of your choosing. Typically this object is something the caller expects for a set of test cases for positive testing and an object with unexpected values during another set of tests for negative testing.
+
+### Spies
+
+A test spy wraps the “real” object, overriding some method and letting others pass through. A spy is typically attached to a real object and intercepts some method calls (sometimes even only intercepting method calls with specific parameters) to return a canned response or keep track of the number of times a method has been called. Nonintercepted methods are simply handed off to the real object for normal processing. Spies are great for objects that have some “heavy” operations that you want to mock out and lighter-weight operations that the actual object can easily handle itself.
